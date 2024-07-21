@@ -70,7 +70,7 @@ modified: {today_date}
             print("Repo Status:", repo.git.status())
             if repo.is_dirty():
                 print("Changes detected.")
-                repo.git.add(A=True)
+                repo.git.add(A=True)  # Stage all changes
                 commit_message = f"Added todo: {file_name}"
                 repo.index.commit(commit_message)
                 origin = repo.remote(name='origin')
@@ -86,7 +86,9 @@ modified: {today_date}
             repo = Repo('.')
             print("Pulling latest changes from remote...")
             repo.git.pull()
-            print("Pull complete. Now committing and pushing local changes...")
+            print("Pull complete. Now staging changes...")
+            repo.git.add(A=True)  # Stage all changes
+            print("Changes staged. Now committing and pushing...")
             # Commit and push changes
             self.commit_and_push("todo files")
         except Exception as e:
