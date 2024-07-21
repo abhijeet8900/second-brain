@@ -67,7 +67,9 @@ modified: {today_date}
     def commit_and_push(self, file_name):
         try:
             repo = Repo('.')
+            print("Repo Status:", repo.git.status())
             if repo.is_dirty():
+                print("Changes detected.")
                 repo.git.add(A=True)
                 commit_message = f"Added todo: {file_name}"
                 repo.index.commit(commit_message)
