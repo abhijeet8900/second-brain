@@ -2,6 +2,7 @@
 
 import argparse
 import subprocess
+import os
 from pathlib import Path
 from datetime import datetime
 import platform
@@ -10,6 +11,15 @@ from git import Repo
 class Brain:
     def __init__(self, version):
         self.version = version
+        self.ensure_git_in_path()
+
+    def ensure_git_in_path(self):
+        """Ensure Git is in the PATH environment variable."""
+        if platform.system() == "Darwin":  # macOS
+            git_path = subprocess.run(['which', 'git'], capture_output=True, text=True).stdout.strip()
+            if not git_path:
+                raise EnvironmentError("Git not found. Please install Git.")
+            os.environ['PATH'] += os.pathsep + os.path.dirname(git_path)
 
     def print_version(self):
         print(f"Brain version: {self.version}")
