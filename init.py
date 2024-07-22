@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 from datetime import datetime
 import platform
-from git import Repo
 
 class Brain:
     def __init__(self, version):
@@ -74,35 +73,62 @@ modified: {today_date}
         # Open the file
         self.open_file(file_path)
 
-    def commit_and_push(self, file_name):
+    def commit_and_push(self, commit_message):
         try:
-            repo = Repo('.')
-            print("Repo Status:", repo.git.status())
-            if repo.is_dirty():
-                print("Changes detected.")
-                repo.git.add(A=True)  # Stage all changes
-                commit_message = f"Added todo: {file_name}"
-                repo.index.commit(commit_message)
-                origin = repo.remote(name='origin')
-                origin.push()
-                print(f"Committed and pushed changes with message: '{commit_message}'")
-            else:
-                print("No changes to commit.")
-        except Exception as e:
-            print(f"Error committing changes: {e}")
+            # Stage all changes
+            subprocess.run(['git', 'add', '--all'], check=True)
+
+            # Commit changes
+            subprocess.run(['git', 'commit', '-m', commit_message], check=True)
+
+            # Push changes
+            subprocess.run(['git', 'push'], check=True)
+
+            print(f"Committed and pushed changes with message: '{commit_message}'")
+        except subprocess.CalledProcessError as e:
+            print(f"Error during git operation: {e}")
 
     def sync(self):
         try:
-            repo = Repo('.')
+            # Pull latest changes from remote
             print("Pulling latest changes from remote...")
-            repo.git.pull()
+            subprocess.run(['git', 'pull'], check=True)
             print("Pull complete. Now staging changes...")
-            repo.git.add(A=True)  # Stage all changes
+
+            # Stage all changes
+            subprocess.run(['git', 'add', '--all'], check=True)
             print("Changes staged. Now committing and pushing...")
+
             # Commit and push changes
-            self.commit_and_push("todo files")
-        except Exception as e:
+            self.commit_and_push("Synchronized changes with remote")
+        except subprocess.CalledProcessError as e:
             print(f"Error during sync: {e}")
+
+    def uninstall(self):
+        """Remove all files and configurations created by the brain script."""
+        # Define paths to be removed
+        paths_to_remove = [
+            Path('/usr/local/bin/brain'),  # Example symlink path
+            Path('05-todos'),
+            Path('configs/todo-template.md')
+        ]
+
+        for path in paths_to_remove:
+            try:
+                if path.is_symlink() or path.is_file():
+                    path.unlink()
+                    print(f"Removed file: {path}")
+                elif path.is_dir():
+                    for sub_path in path.rglob('*'):
+                        if sub_path.is_file():
+                            sub_path.unlink()
+                            print(f"Removed file: {sub_path}")
+                    path.rmdir()
+                    print(f"Removed directory: {path}")
+            except Exception as e:
+                print(f"Error removing {path}: {e}")
+
+        print("Uninstallation complete.")
 
 class CommandLineInterface:
     def __init__(self):
@@ -120,6 +146,9 @@ class CommandLineInterface:
         # Create subparser for `sync`
         sync_parser = subparsers.add_parser('sync', help='Sync with git repository')
 
+        # Create subparser for `uninstall`
+        uninstall_parser = subparsers.add_parser('uninstall', help='Uninstall Brain and revert changes')
+
     def run(self, brain):
         if self.args.version:
             brain.print_version()
@@ -127,6 +156,8 @@ class CommandLineInterface:
             brain.create_or_open_todo()
         elif self.args.command == 'sync':
             brain.sync()
+        elif self.args.command == 'uninstall':
+            brain.uninstall()
 
 def main():
     brain = Brain(version="1.0.0")
