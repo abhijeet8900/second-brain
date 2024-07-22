@@ -25,14 +25,17 @@ class Brain:
 
     def open_file(self, file_path):
         """Open a file using the default application based on the OS."""
-        if platform.system() == "Darwin":  # macOS
-            subprocess.run(['open', file_path])
-        elif platform.system() == "Linux":
-            subprocess.run(['xdg-open', file_path])
-        elif platform.system() == "Windows":
-            subprocess.run(['start', file_path], shell=True)
-        else:
-            print("Unsupported operating system for opening files.")
+        try:
+            if platform.system() == "Darwin":  # macOS
+                subprocess.run(['open', file_path])
+            elif platform.system() == "Linux":
+                subprocess.run(['xdg-open', file_path])
+            elif platform.system() == "Windows":
+                subprocess.run(['start', file_path], shell=True)
+            else:
+                print("Unsupported operating system for opening files.")
+        except Exception as e:
+            print(f"Error opening file: {e}")
 
     def create_or_open_todo(self):
         # Define the folder and file name
@@ -87,6 +90,8 @@ modified: {today_date}
             print(f"Committed and pushed changes with message: '{commit_message}'")
         except subprocess.CalledProcessError as e:
             print(f"Error during git operation: {e}")
+        except PermissionError as e:
+            print(f"Permission error during git operation: {e}")
 
     def sync(self):
         try:
@@ -103,6 +108,8 @@ modified: {today_date}
             self.commit_and_push("Synchronized changes with remote")
         except subprocess.CalledProcessError as e:
             print(f"Error during sync: {e}")
+        except PermissionError as e:
+            print(f"Permission error during sync: {e}")
 
     def uninstall(self):
         """Remove all files and configurations created by the brain script."""
@@ -127,6 +134,8 @@ modified: {today_date}
                     print(f"Removed directory: {path}")
             except Exception as e:
                 print(f"Error removing {path}: {e}")
+            except PermissionError as e:
+                print(f"Permission error removing {path}: {e}")
 
         print("Uninstallation complete.")
 
