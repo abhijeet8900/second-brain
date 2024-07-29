@@ -54,3 +54,5 @@ The CLI provides various commands to interact with the Brain application
 `brain todo export month <x>` : Exports todo's for x number of months from today
 
 `brain sync` : Sync up with git repo
+
+`brain help` : List out available commands
