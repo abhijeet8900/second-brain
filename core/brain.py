@@ -131,9 +131,15 @@ modified: {today_date}
             print("Logging changes in non-script files...")
             result = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
             changes = result.stdout.strip().split('\n')
+            has_changes = any(change and not change.startswith('M *.py') for change in changes)
+            
             for change in changes:
                 if change and not change.startswith('M *.py'):
                     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {change}")
+
+            if not has_changes:
+                print("No changes to commit.")
+                return
 
             # Stage any local changes
             print("Staging changes...")
