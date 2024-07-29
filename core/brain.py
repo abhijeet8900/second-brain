@@ -48,13 +48,13 @@ class Brain:
     def create_or_open_todo(self):
         """Create or open a TODO file with a template."""
         self.change_to_project_directory()
-        
+
         folder = Path('05-todos')
         today_date = datetime.now().strftime('%Y-%m-%d')
         file_name = f"{today_date}.md"
         file_path = folder / file_name
 
-        template_path = Path('configs/todo-template.md')
+        template_path = Path('configs/templates/todo.md')
         folder.mkdir(parents=True, exist_ok=True)
 
         if file_path.exists():
@@ -65,37 +65,51 @@ class Brain:
                     template_content = template_file.read()
 
                 # Replace placeholders with today's date
-                template_content = template_content.replace('created: YYYY-MM-DD', f'created: {today_date}')
-                template_content = template_content.replace('modified: YYYY-MM-DD', f'modified: {today_date}')
-            else:
-                print(f"Template file not found: {template_path}")
-                template_content = f"""---
-created: {today_date}
-modified: {today_date}
----
-"""
+                template_content = template_content.replace('{{CreationDate}}', today_date)
+                template_content = template_content.replace('{{ModificationDate}}', today_date)
 
-            with file_path.open('w') as file:
-                file.write(template_content)
-            print(f"Markdown file created at {file_path}")
+                with file_path.open('w') as file:
+                    file.write(template_content)
+                print(f"Markdown file created at {file_path}")
+            else:
+                print(f"Error: Template file not found: {template_path}")
+                print("Please ensure the template file exists at 'configs/templates/todo.md' and try again.")
+                return
 
         self.open_file(file_path)
 
     def create_new_project(self, project_name):
-        """Create a new project file with the given name."""
+        """Create a new project file with the given name using a template."""
         self.change_to_project_directory()
-        
+
         folder = Path('01-projects')
-        file_path = folder / f"{project_name}.md"
-        
+        today_date = datetime.now().strftime('%Y-%m-%d')
+        file_name = f"{project_name}.md"
+        file_path = folder / file_name
+
+        template_path = Path('configs/templates/project.md')
         folder.mkdir(parents=True, exist_ok=True)
+
         if file_path.exists():
             print(f"Project file already exists: {file_path}")
         else:
-            with file_path.open('w') as file:
-                file.write(f"# {project_name}\n\n")
-            print(f"New project file created: {file_path}")
-        
+            if template_path.exists():
+                with template_path.open('r') as template_file:
+                    template_content = template_file.read()
+
+                # Replace placeholders with project name and today's date
+                template_content = template_content.replace('{{ProjectName}}', project_name)
+                template_content = template_content.replace('{{CreationDate}}', today_date)
+                template_content = template_content.replace('{{ModificationDate}}', today_date)
+
+                with file_path.open('w') as file:
+                    file.write(template_content)
+                print(f"New project file created: {file_path}")
+            else:
+                print(f"Error: Template file not found: {template_path}")
+                print("Please ensure the template file exists at 'configs/templates/project.md' and try again.")
+                return
+
         self.open_file(file_path)
 
     def has_changes(self):
