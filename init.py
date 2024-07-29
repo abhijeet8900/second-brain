@@ -10,6 +10,7 @@ import platform
 class Brain:
     def __init__(self, version):
         self.version = version
+        self.project_dir = self.find_project_directory()
         self.ensure_git_in_path()
 
     def ensure_git_in_path(self):
@@ -19,6 +20,16 @@ class Brain:
             if not git_path:
                 raise EnvironmentError("Git not found. Please install Git.")
             os.environ['PATH'] += os.pathsep + os.path.dirname(git_path)
+
+    def find_project_directory(self):
+        """Find and return the root directory of the project."""
+        current_file = Path(__file__).resolve()
+        return current_file.parent.parent
+
+    def change_to_project_directory(self):
+        """Change the current working directory to the project root directory."""
+        os.chdir(self.project_dir)
+        print(f"Changed directory to project root: {self.project_dir}")
 
     def print_version(self):
         print(f"Brain version: {self.version}")
@@ -38,6 +49,9 @@ class Brain:
             print(f"Error opening file: {e}")
 
     def create_or_open_todo(self):
+        # Change to the project directory
+        self.change_to_project_directory()
+
         # Define the folder and file name
         folder = Path('05-todos')
         today_date = datetime.now().strftime('%Y-%m-%d')
@@ -77,6 +91,7 @@ modified: {today_date}
         self.open_file(file_path)
 
     def commit_and_push(self, commit_message):
+        self.change_to_project_directory()  # Ensure we're in the project directory
         try:
             # Stage all changes
             subprocess.run(['git', 'add', '--all'], check=True)
@@ -94,6 +109,7 @@ modified: {today_date}
             print(f"Permission error during git operation: {e}")
 
     def sync(self):
+        self.change_to_project_directory()  # Ensure we're in the project directory
         try:
             # Pull latest changes from remote
             print("Pulling latest changes from remote...")
