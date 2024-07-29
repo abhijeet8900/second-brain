@@ -16,11 +16,14 @@ Specify the features or functionalities required for the project.
 - [x] Ability to create new todo using CLI using template
 - [x] Ability to create new project document using CLI using template
 - [x] To have setup script which will work on any operating system
+- [ ] Dockerize project
 
 ## Resources and Links
 
 - [Building a Second Brain: The Definitive Introductory Guide](https://fortelabs.com/blog/basboverview/): Introduction to Building a Second Brain, the proven method to organize your digital life.
 - [My custom second brain setup, part 1: Why go custom?](https://luhr.co/blog/2023/04/19/my-custom-second-brain-setup-part-1-why-go-custom/): Blog for using VCS such as Github as second brain.
+
+ 
 
 ---
 
