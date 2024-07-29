@@ -118,7 +118,7 @@ modified: {today_date}
     def sync(self):
         self.change_to_project_directory()  # Ensure we're in the project directory
         try:
-            # Discard local changes in script files
+            # Discard local changes in Python script files
             print("Discarding local changes in script files...")
             subprocess.run(['git', 'restore', '--staged', '*.py'], check=True)
             subprocess.run(['git', 'restore', '*.py'], check=True)
@@ -126,6 +126,14 @@ modified: {today_date}
             # Pull the latest changes from the remote repository
             print("Pulling latest changes from the remote repository...")
             subprocess.run(['git', 'pull'], check=True)
+
+            # Log changes in non-script files after pull
+            print("Logging changes in non-script files...")
+            result = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
+            changes = result.stdout.strip().split('\n')
+            for change in changes:
+                if change and not change.startswith('M *.py'):
+                    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {change}")
 
             # Stage any local changes
             print("Staging changes...")
@@ -168,5 +176,7 @@ modified: {today_date}
                     print(f"Removed directory: {path}")
             except Exception as e:
                 print(f"Error removing {path}: {e}")
+            except PermissionError as e:
+                print(f"Permission error removing {path}: {e}")
 
         print("Uninstallation complete.")
