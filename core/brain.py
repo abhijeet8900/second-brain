@@ -114,6 +114,35 @@ class Brain:
 
         self.open_file(file_path)
 
+    def list_projects(self):
+        """List all project files in the '01-projects' directory."""
+        self.change_to_project_directory()
+
+        folder = Path('01-projects')
+        if not folder.exists():
+            print(f"No '01-projects' directory found.")
+            return
+
+        project_files = list(folder.glob('*.md'))
+        if project_files:
+            print("Project files:")
+            for file in project_files:
+                print(f" - {file.name}")
+        else:
+            print("No project files found.")
+
+    def open_project(self, project_name):
+        """Open a specific project file."""
+        self.change_to_project_directory()
+
+        folder = Path('01-projects')
+        file_path = folder / f"{project_name}.md"
+
+        if file_path.exists():
+            self.open_file(file_path)
+        else:
+            print(f"Project file not found: {file_path}")
+
     def has_changes(self):
         """Check if there are any changes to commit."""
         result = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
@@ -222,22 +251,17 @@ class Brain:
             fieldnames = ['Item', 'Status']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
-
+            
             for todo_file in folder.glob('*.md'):
                 file_date = datetime.strptime(todo_file.stem, '%Y-%m-%d')
-
                 if start_date <= file_date <= end_date:
                     with todo_file.open('r') as file:
                         for line in file:
-                            if line.strip().startswith('- ['):
-                                status = "Complete" if '[x]' in line else "Incomplete"
-                                item = line.split(']', 1)[1].strip()  # Remove checkbox and leading spaces
-                                
-                                # Skip empty items
-                                if item:
-                                    writer.writerow({
-                                        'Item': item,
-                                        'Status': status
-                                    })
+                            if line.startswith('- [ ]') or line.startswith('- [x]'):
+                                status = 'Completed' if '[x]' in line else 'Pending'
+                                item = line[6:].strip()
+                                writer.writerow({'Item': item, 'Status': status})
+        
+        print(f"TODO items exported to {csv_file_path}")
 
-        print(f"Exported TODOs to {csv_file_path}")
+# Usage of the class remains the same, assuming it is invoked via CLI or another interface.

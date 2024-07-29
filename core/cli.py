@@ -42,6 +42,13 @@ class CommandLineInterface:
         export_week_parser = export_subparsers.add_parser('week', help='Export TODO items from the last x weeks')
         export_week_parser.add_argument('weeks', type=int, nargs='?', default=1, help='Number of weeks to export (default: 1 week)')
 
+        # Subparser for 'project' command
+        project_parser = subparsers.add_parser('project', help='Open a project file')
+        project_parser.add_argument('name', help='Name of the project to open')
+
+        # Subparser for 'projects' command
+        subparsers.add_parser('projects', help='List all project files')
+
         # Subparser for 'sync' command
         subparsers.add_parser('sync', help='Sync local changes with the remote repository')
 
@@ -60,18 +67,19 @@ class CommandLineInterface:
                 brain.create_or_open_todo()
             elif args.todo_action == 'export':
                 if args.export_type == 'month':
-                    # Use default value of 1 month if not provided
                     brain.export_todos_by_period('month', args.months)
                 elif args.export_type == 'week':
-                    # Use default value of 1 week if not provided
                     brain.export_todos_by_period('week', args.weeks)
+        elif args.command == 'project':
+            brain.open_project(args.name)
+        elif args.command == 'projects':
+            brain.list_projects()
         elif args.command == 'sync':
             brain.sync()
         else:
             self.parser.print_help()
 
     def move_to_project_directory(self):
-        # Change to the project directory
         project_dir = Path(__file__).parent.parent
         os.chdir(project_dir)
         print(f"Moved to project directory: {project_dir}")
