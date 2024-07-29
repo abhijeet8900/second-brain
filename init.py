@@ -167,6 +167,14 @@ class CommandLineInterface:
             brain.sync()
         elif self.args.command == 'uninstall':
             brain.uninstall()
+        else:
+            self.move_to_project_directory()
+
+    def move_to_project_directory(self):
+        # Change to the project directory
+        project_dir = Path(__file__).parent.parent
+        os.chdir(project_dir)
+        print(f"Moved to project directory: {project_dir}")
 
 def main():
     brain = Brain(version="1.0.0")
