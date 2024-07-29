@@ -139,15 +139,28 @@ class Brain:
         """Sync local changes with the remote repository."""
         self.change_to_project_directory()
         try:
+            # Discard local changes in script files
+            print("Discarding local changes in script files...")
             subprocess.run(['git', 'restore', '--staged', '*.py'], check=True)
             subprocess.run(['git', 'restore', '*.py'], check=True)
 
+            # Pull the latest changes from the remote repository
             print("Pulling latest changes from the remote repository...")
             subprocess.run(['git', 'pull'], check=True)
 
+            # Check for changes after pulling
+            result = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
+            if result.stdout.strip():
+                print("Changes detected:")
+                print(result.stdout)
+            else:
+                print("No changes detected after pull.")
+
+            # Stage any local changes
             print("Staging changes...")
             subprocess.run(['git', 'add', '.'], check=True)
 
+            # Commit changes with an automated message
             commit_message = "Synchronized changes with remote"
             print(f"Committing changes with message: '{commit_message}'")
             result = subprocess.run(['git', 'commit', '-m', commit_message], check=True)

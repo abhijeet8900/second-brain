@@ -28,6 +28,9 @@ class CommandLineInterface:
         # Subparser for 'todo' command
         subparsers.add_parser('todo', help='Open the most recent TODO file')
 
+        # Subparser for 'sync' command
+        subparsers.add_parser('sync', help='Sync local changes with the remote repository')
+
     def run(self, brain):
         args = self.parser.parse_args()
         if args.command == 'new':
@@ -40,8 +43,11 @@ class CommandLineInterface:
                     brain.create_new_project(args.name)
         elif args.command == 'todo':
             brain.create_or_open_todo()
+        elif args.command == 'sync':
+            brain.sync()
         else:
             self.parser.print_help()
+
     def move_to_project_directory(self):
         # Change to the project directory
         project_dir = Path(__file__).parent.parent
