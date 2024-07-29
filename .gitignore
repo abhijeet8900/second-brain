@@ -1,1 +1,15 @@
 /brain.bat
+# Ignore Python bytecode files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ignore virtual environments
+venv/
+.env/
+
+# Ignore other common files
+.DS_Store
+*.log
+*.tmp
