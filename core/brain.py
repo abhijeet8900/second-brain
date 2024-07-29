@@ -118,31 +118,27 @@ modified: {today_date}
     def sync(self):
         self.change_to_project_directory()  # Ensure we're in the project directory
         try:
-            # Change to the project directory
-            project_dir = self.project_dir  # Update this with the actual path
-            subprocess.run(['cd', project_dir], check=True, shell=True)
-
             # Discard local changes in script files
             print("Discarding local changes in script files...")
-            subprocess.run(['git', 'restore', '--staged', '*.py'], check=True, cwd=project_dir)
-            subprocess.run(['git', 'restore', '*.py'], check=True, cwd=project_dir)
+            subprocess.run(['git', 'restore', '--staged', '*.py'], check=True)
+            subprocess.run(['git', 'restore', '*.py'], check=True)
 
             # Pull the latest changes from the remote repository
             print("Pulling latest changes from the remote repository...")
-            subprocess.run(['git', 'pull'], check=True, cwd=project_dir)
+            subprocess.run(['git', 'pull'], check=True)
 
             # Stage any local changes
             print("Staging changes...")
-            subprocess.run(['git', 'add', '.'], check=True, cwd=project_dir)
+            subprocess.run(['git', 'add', '.'], check=True)
 
             # Commit changes with an automated message
             commit_message = "Synchronized changes with remote"
             print(f"Committing changes with message: '{commit_message}'")
-            subprocess.run(['git', 'commit', '-m', commit_message], check=True, cwd=project_dir)
+            subprocess.run(['git', 'commit', '-m', commit_message], check=True)
 
             # Push changes to the remote repository
             print("Pushing changes to the remote repository...")
-            subprocess.run(['git', 'push'], check=True, cwd=project_dir)
+            subprocess.run(['git', 'push'], check=True)
 
             print("Sync completed successfully.")
 
@@ -172,7 +168,5 @@ modified: {today_date}
                     print(f"Removed directory: {path}")
             except Exception as e:
                 print(f"Error removing {path}: {e}")
-            except PermissionError as e:
-                print(f"Permission error removing {path}: {e}")
 
         print("Uninstallation complete.")
