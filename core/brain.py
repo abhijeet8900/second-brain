@@ -1,8 +1,10 @@
+import csv
+from datetime import datetime, timedelta
 from pathlib import Path
 import subprocess
 import os
 import platform
-from datetime import datetime
+from typing import Optional, Union
 
 class Brain:
     def __init__(self, version):
@@ -201,3 +203,41 @@ class Brain:
                 print(f"Permission error removing {path}: {e}")
 
         print("Uninstallation complete.")
+
+    def export_todos_by_period(self, period: str = 'week', num_periods: int = 1):
+        """Export TODO items to a CSV file based on the specified period."""
+        self.change_to_project_directory()
+
+        folder = Path('05-todos')
+        exports_folder = folder / 'exports'
+        exports_folder.mkdir(parents=True, exist_ok=True)
+
+        today = datetime.now()
+        start_date = today - (timedelta(weeks=num_periods * 7) if period == 'week' else timedelta(days=num_periods * 30))
+        end_date = today
+
+        csv_file_path = exports_folder / f"todos_export_{period}_{num_periods}_{start_date.strftime('%Y-%m-%d')}_{end_date.strftime('%Y-%m-%d')}.csv"
+        
+        with open(csv_file_path, 'w', newline='') as csvfile:
+            fieldnames = ['Item', 'Status']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+
+            for todo_file in folder.glob('*.md'):
+                file_date = datetime.strptime(todo_file.stem, '%Y-%m-%d')
+
+                if start_date <= file_date <= end_date:
+                    with todo_file.open('r') as file:
+                        for line in file:
+                            if line.strip().startswith('- ['):
+                                status = "Complete" if '[x]' in line else "Incomplete"
+                                item = line.split(']', 1)[1].strip()  # Remove checkbox and leading spaces
+                                
+                                # Skip empty items
+                                if item:
+                                    writer.writerow({
+                                        'Item': item,
+                                        'Status': status
+                                    })
+
+        print(f"Exported TODOs to {csv_file_path}")
