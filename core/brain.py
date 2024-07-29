@@ -46,29 +46,24 @@ class Brain:
             print(f"Error opening file: {e}")
 
     def create_or_open_todo(self):
-        # Change to the project directory
+        """Create or open a TODO file with a template."""
         self.change_to_project_directory()
-
-        # Define the folder and file name
+        
         folder = Path('05-todos')
         today_date = datetime.now().strftime('%Y-%m-%d')
         file_name = f"{today_date}.md"
         file_path = folder / file_name
 
-        # Define the template file path
         template_path = Path('configs/todo-template.md')
-
-        # Create the folder if it does not exist
         folder.mkdir(parents=True, exist_ok=True)
 
-        # Create or open the markdown file with the template
         if file_path.exists():
             print(f"Opening existing markdown file: {file_path}")
         else:
             if template_path.exists():
                 with template_path.open('r') as template_file:
                     template_content = template_file.read()
-                
+
                 # Replace placeholders with today's date
                 template_content = template_content.replace('created: YYYY-MM-DD', f'created: {today_date}')
                 template_content = template_content.replace('modified: YYYY-MM-DD', f'modified: {today_date}')
@@ -84,7 +79,23 @@ modified: {today_date}
                 file.write(template_content)
             print(f"Markdown file created at {file_path}")
 
-        # Open the file
+        self.open_file(file_path)
+
+    def create_new_project(self, project_name):
+        """Create a new project file with the given name."""
+        self.change_to_project_directory()
+        
+        folder = Path('01-projects')
+        file_path = folder / f"{project_name}.md"
+        
+        folder.mkdir(parents=True, exist_ok=True)
+        if file_path.exists():
+            print(f"Project file already exists: {file_path}")
+        else:
+            with file_path.open('w') as file:
+                file.write(f"# {project_name}\n\n")
+            print(f"New project file created: {file_path}")
+        
         self.open_file(file_path)
 
     def has_changes(self):
@@ -93,20 +104,15 @@ modified: {today_date}
         return bool(result.stdout.strip())
 
     def commit_and_push(self, commit_message):
-        self.change_to_project_directory()  # Ensure we're in the project directory
+        """Commit and push changes to the git repository."""
+        self.change_to_project_directory()
         try:
-            # Check for changes before staging
             if not self.has_changes():
                 print("No changes to commit.")
                 return
 
-            # Stage all changes
             subprocess.run(['git', 'add', '--all'], check=True)
-
-            # Commit changes
             subprocess.run(['git', 'commit', '-m', commit_message], check=True)
-
-            # Push changes
             subprocess.run(['git', 'push'], check=True)
 
             print(f"Committed and pushed changes with message: '{commit_message}'")
@@ -116,54 +122,36 @@ modified: {today_date}
             print(f"Permission error during git operation: {e}")
 
     def sync(self):
-        self.change_to_project_directory()  # Ensure we're in the project directory
+        """Sync local changes with the remote repository."""
+        self.change_to_project_directory()
         try:
-            # Discard local changes in Python script files
-            print("Discarding local changes in script files...")
             subprocess.run(['git', 'restore', '--staged', '*.py'], check=True)
             subprocess.run(['git', 'restore', '*.py'], check=True)
 
-            # Pull the latest changes from the remote repository
             print("Pulling latest changes from the remote repository...")
             subprocess.run(['git', 'pull'], check=True)
 
-            # Log changes in non-script files after pull
-            print("Logging changes in non-script files...")
-            result = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
-            changes = result.stdout.strip().split('\n')
-            has_changes = any(change and not change.startswith('M *.py') for change in changes)
-            
-            for change in changes:
-                if change and not change.startswith('M *.py'):
-                    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {change}")
-
-            if not has_changes:
-                print("No changes to commit.")
-                return
-
-            # Stage any local changes
             print("Staging changes...")
             subprocess.run(['git', 'add', '.'], check=True)
 
-            # Commit changes with an automated message
             commit_message = "Synchronized changes with remote"
             print(f"Committing changes with message: '{commit_message}'")
-            subprocess.run(['git', 'commit', '-m', commit_message], check=True)
+            result = subprocess.run(['git', 'commit', '-m', commit_message], check=True)
 
-            # Push changes to the remote repository
-            print("Pushing changes to the remote repository...")
-            subprocess.run(['git', 'push'], check=True)
-
-            print("Sync completed successfully.")
+            if result.returncode == 0:
+                print("Pushing changes to the remote repository...")
+                subprocess.run(['git', 'push'], check=True)
+                print("Sync completed successfully.")
+            else:
+                print("No changes to commit.")
 
         except subprocess.CalledProcessError as e:
             print(f"Error during git operation: {e}")
 
     def uninstall(self):
         """Remove all files and configurations created by the brain script."""
-        # Define paths to be removed
         paths_to_remove = [
-            Path('/usr/local/bin/brain'),  # Example symlink path
+            Path('/usr/local/bin/brain'),
             Path('05-todos'),
             Path('configs/todo-template.md')
         ]
