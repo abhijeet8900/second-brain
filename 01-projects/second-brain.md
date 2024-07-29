@@ -1,54 +1,28 @@
-# Project Title: second-brain
+# Project Title: Second Brain
 
-## Overview
+Idea inspires from [My custom second brain setup](https://luhr.co/blog/2023/04/19/my-custom-second-brain-setup-part-1-why-go-custom/), basic idea behind this is using version control system as your second brain or personal knowledge base. Main goal of building this application is to have custom build second brain app where we can add new features as needed and most of all its free.
+This application / system is to be used for long term. Goal of this system is to be easy to maintain and write documents or any text.
+Core functionality or principal it should provide is ability to note down stuff, organize new ideas act as personal diary all this using markdown as file format
 
-**Description:**  
-Briefly describe the project idea. What is the project about?
+## Goals  
 
-**Goals:**  
-
-- Goal 1: Define a clear objective.
-- Goal 2: Outline additional aims.
-
-## Action Items
-
-**Tasks:**  
-List the actionable items you need to complete. Check them off as you go.
-
-- [ ] Task 1: Short description of what needs to be done.
-- [ ] Task 2: Short description of what needs to be done.
+- Build personal knowledge base system backed by version control system.
 
 ## Requirements
 
-**Functional:**  
 Specify the features or functionalities required for the project.
 
-- Requirement 1: Describe the functionality.
-- Requirement 2: Describe another functionality.
+- [x] Ability to sync with github
+- [x] Ability to create new todo using CLI using template
+- [x] Ability to create new project document using CLI using template
+- [x] To have setup script which will work on any operating system
 
-**Non-Functional:**  
-Outline any performance or quality attributes required.
+## Resources and Links
 
-- Requirement 1: Describe the non-functional requirement.
-- Requirement 2: Describe another non-functional requirement.
-
-## Notes
-
-**Additional Information:**  
-Any extra observations or thoughts related to the project.
-
-- Note 1: Briefly explain or elaborate.
-- Note 2: Briefly explain or elaborate.
-
-## References
-
-**Resources and Links:**  
-Include any relevant resources, articles, or references.
-
-- [Reference 1](URL): Short description of what the reference is about.
-- [Reference 2](URL): Short description of what the reference is about.
+- [Building a Second Brain: The Definitive Introductory Guide](https://fortelabs.com/blog/basboverview/): Introduction to Building a Second Brain, the proven method to organize your digital life.
+- [My custom second brain setup, part 1: Why go custom?](https://luhr.co/blog/2023/04/19/my-custom-second-brain-setup-part-1-why-go-custom/): Blog for using VCS such as Github as second brain.
 
 ---
 
-**Created on:** 2024-07-29  
-**Last Modified on:** 2024-07-29
+**Created on:**  2024-07-29  
+**Last Modified on:**  2024-07-29
