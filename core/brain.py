@@ -118,22 +118,36 @@ modified: {today_date}
     def sync(self):
         self.change_to_project_directory()  # Ensure we're in the project directory
         try:
-            # Pull latest changes from remote
-            print("Pulling latest changes from remote...")
-            subprocess.run(['git', 'pull'], check=True)
-            print("Pull complete. Now staging changes...")
+            # Change to the project directory
+            project_dir = self.project_dir  # Update this with the actual path
+            subprocess.run(['cd', project_dir], check=True, shell=True)
 
-            # Stage all changes
-            if self.has_changes():
-                print("Changes staged. Now committing and pushing...")
-                # Commit and push changes
-                self.commit_and_push("Synchronized changes with remote")
-            else:
-                print("No changes to stage, commit, or push.")
+            # Discard local changes in script files
+            print("Discarding local changes in script files...")
+            subprocess.run(['git', 'restore', '--staged', '*.py'], check=True, cwd=project_dir)
+            subprocess.run(['git', 'restore', '*.py'], check=True, cwd=project_dir)
+
+            # Pull the latest changes from the remote repository
+            print("Pulling latest changes from the remote repository...")
+            subprocess.run(['git', 'pull'], check=True, cwd=project_dir)
+
+            # Stage any local changes
+            print("Staging changes...")
+            subprocess.run(['git', 'add', '.'], check=True, cwd=project_dir)
+
+            # Commit changes with an automated message
+            commit_message = "Synchronized changes with remote"
+            print(f"Committing changes with message: '{commit_message}'")
+            subprocess.run(['git', 'commit', '-m', commit_message], check=True, cwd=project_dir)
+
+            # Push changes to the remote repository
+            print("Pushing changes to the remote repository...")
+            subprocess.run(['git', 'push'], check=True, cwd=project_dir)
+
+            print("Sync completed successfully.")
+
         except subprocess.CalledProcessError as e:
-            print(f"Error during sync: {e}")
-        except PermissionError as e:
-            print(f"Permission error during sync: {e}")
+            print(f"Error during git operation: {e}")
 
     def uninstall(self):
         """Remove all files and configurations created by the brain script."""
