@@ -7,8 +7,7 @@ We want to write script to extract financial details from documents such as acco
 **Goals:**
 
 - Extract key information from  documents ( account statement), such as transactions, account details, opening / closing balance.
-- Information extracted from documents should be returnable in different format. (csv, xls, dataframe ), which will help in further processing and analyzing. 
-
+- Information extracted from documents should be returnable in different format. (csv, xls, dataframe ), which will help in further processing and analyzing.
 
 ## Action Items
 
@@ -37,7 +36,7 @@ We can to extract transaction and account information form account statement. We
 - For each of bank statement page we need to remove total row, which indicates total of column for that page.
 - Major issue with OCR is its ability to extract information. Its not 100% accurate, for each bank statement we need to tweak image optimization as well as extraction logic to get higher accuracy, goal is to get all major information.
 	> We can search for information that we can extract consistently which we can use to verify our data frame. Eg Account opening and closing balance, date.
-- Account statement document has extra information about sub accounts connected to primary account eg PPF account, RD account. We need to check if details for these accounts are important or not. 
+- Account statement document has extra information about sub accounts connected to primary account eg PPF account, RD account. We need to check if details for these accounts are important or not.
 
 ## Dataframe Standardization
 
@@ -58,7 +57,7 @@ We want to ensure that for different banks we application outputs following info
 - Transaction information
 	- Date of transaction
 	- Description of transaction
-	- Amount of transaction 
+	- Amount of transaction
 	- Balance after transaction ( just be cause its available there )
 
 ## Notes
