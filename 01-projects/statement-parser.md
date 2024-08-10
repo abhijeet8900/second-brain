@@ -9,13 +9,69 @@ We want to write script to extract financial details from documents such as acco
 - Extract key information from  documents ( account statement), such as transactions, account details, opening / closing balance.
 - Information extracted from documents should be returnable in different format. (csv, xls, dataframe ), which will help in further processing and analyzing.
 
-## Action Items
+## Project Folder Structure
+> Not final structure just for reference
 
-**Tasks:**
+```plaintext
+FinExtract/
+├── .gitignore
+├── .env
+├── .pre-commit-config.yaml
+├── LICENSE
+├── Makefile
+├── poetry.lock
+├── pyproject.toml
+├── README.md
+├── docs/
+│   └── ...
+├── src/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── config.py
+│   ├── utils.py
+│   └── parsers/
+│   	├── __init__.py
+│       ├── abstract_class.py
+│       ├── bank1.py
+|		├── bank2.py
+|		└── ...
+│   └── extractors/
+│   	├── __init__.py
+│       ├── abstract_class.py
+│       ├── bank1.py
+|		├── bank2.py
+|		└── ...
+│   └── image_optimizers/
+│       ├── __init__.py
+│       ├── abstract_class.py
+│       ├── bank1.py
+|		└── bank2.py
+|	└── normalizers/
+│       ├── __init__.py
+│       ├── abstract_class.py
+│       ├── bank1.py
+|		└── bank2.py
+|		└── ...
+└── scripts/
+    ├── setup.py
+    └── script2.py
+```
+
+## Action Items
 
 - [ ] Extract information from documents in data frame.
 - [ ] Standardize extracted information
 - [ ] Consolidate information from multiple source. eg Account statements from multiple accounts.
+
+**Tasks:**
+
+### Initial Setup
+
+- [ ] Initialize git repo for project
+- [ ] Create new project using python poetry for better dependency management
+- [ ] Create MakeFile for project, to create custom commands
+- [ ] Create abstract abstract class for bank
+
 
 ## Extracting information from PDF documents
 
