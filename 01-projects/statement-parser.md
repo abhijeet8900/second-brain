@@ -10,6 +10,7 @@ We want to write script to extract financial details from documents such as acco
 - Information extracted from documents should be returnable in different format. (csv, xls, dataframe ), which will help in further processing and analyzing.
 
 ## Project Folder Structure
+
 > Not final structure just for reference
 
 ```plaintext
@@ -57,25 +58,47 @@ FinExtract/
     └── script2.py
 ```
 
-## Action Items
+## Feature Tasks
 
-- [ ] Extract information from documents in data frame.
-- [ ] Standardize extracted information
-- [ ] Consolidate information from multiple source. eg Account statements from multiple accounts.
+- [x] Initialize git repo for project
+- [x] Create new project using python poetry for better dependency management
+- [x] Create MakeFile for project, to create custom commands
+- [x] Create abstract abstract class for extractor
+- [x] Create class for image optimizer
+- [x] Function to extract account statement information
+- [x] Function to extract transaction information
+- [ ] Function to clean final transaction tables for any impurities, eg duplicate rows, missing information
 
-**Tasks:**
+## Refactors Tasks
 
-### Initial Setup
+- [ ] Update extract table function to extract tables by passed headers, it should combine header tables as well
+- [ ] Standardize module imports for python
+- [ ] Code refactoring for each module
+- [ ] Add better log to know progress in terminal
 
-- [ ] Initialize git repo for project
-- [ ] Create new project using python poetry for better dependency management
-- [ ] Create MakeFile for project, to create custom commands
-- [ ] Create abstract abstract class for bank
+## Issues
 
+- [ ] Not recognizing table from last page with single row ( ICICI Statement )
+- Need to consider statement might have multiple account related transactions
+        -- Should not worry about is as current goal is to extract only bank account transactions
+        - [x] Write function to detect table with account transactions only, title matching works for ICICI statement since it contains partial account no as well as account type ("Savings Account")
+
+- [ ] Need to test each statement with following type of account statements
+        - multiple 1 month statement of each bank : Union, IDBI, ICICI, SBI, Need to verify using xls statements
+        - multiple 3 month statement of each bank : Union, IDBI, ICICI, SBI, Need to verify using xls statements
+
+- [x] Need to write validator to remove and incorrectly captured transaction, currently statement may capture some transactions twice
+    -- we confirm it by check if date, withdrawal, deposit is equal and if balance for both is same then its potential duplication row
+
+- [ ] Final transaction table has some rows values in both deposit and withdrawal column, this is due to its reading adjacent rows as single row. Possible solution here is better image optimization
 
 ## Extracting information from PDF documents
 
-Considering we are only aiming at bank statements at this point, extracting information from PDF is hard, specially tables. To solve this we will convert PDF documents into images and then we will use OCR library to extract information from these images.
+Considering we are only aiming at bank statements at this point, extracting information from PDF is hard, specially tables. To solve this we will convert PDF documents into images and then we will use OCR library to extract information from these images. Each bank will have its information in different layout in PDF we will  need to write function for each bank's extractor. In order to increase accuracy we will store all account information in env variables which we can use to verify extracted info.
+
+### ICICI Extractor
+
+ICICI bank statement has its statement related information on first page. We can extract it as table, this information contains partial account no ( last few digits ), It also contains account type and closing balance.
 
 `Convert PDF into images -> Optimize image for OCR -> Extract information using OCR`
 
@@ -118,11 +141,6 @@ We want to ensure that for different banks we application outputs following info
 
 ## Notes
 
-**Additional Information:**  
-Any extra observations or thoughts related to the project.
-
-- Note 1: Briefly explain or elaborate.
-- Note 2: Briefly explain or elaborate.
 
 ## References
 
