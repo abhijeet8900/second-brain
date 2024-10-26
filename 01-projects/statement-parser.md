@@ -67,6 +67,8 @@ FinExtract/
 - [x] Create class for image optimizer
 - [x] Function to extract account statement information
 - [x] Function to extract transaction information
+- [ ] Extrating opening balance from icici statement 
+- [ ] function to validate all rows in transaction data frame
 - [ ] Function to clean final transaction tables for any impurities, eg duplicate rows, missing information
 
 ## Refactors Tasks
@@ -140,6 +142,9 @@ We want to ensure that for different banks we application outputs following info
 	- Balance after transaction ( just be cause its available there )
 
 ## Notes
+
+- For handling missing rows from statement or any impurities in statement, one of the solution is to have multiple image conversions and use those images to extract multiple data frames for single pdf, then we validate rows coming from each of this data frame to increase chances of correct rows.
+- Validating rows will be easy since combination of date, withdrawal and balance will form unique hash for each row. Eg each unique row will have some different combination of all fields which are non duplicate for that statement.
 
 
 ## References
